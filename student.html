@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack Pro | Secure Academic Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --teacher: #db2777;
+            --teacher-hover: #be185d;
+            --student: #059669;
+            --student-hover: #047857;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            color: var(--text-main); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .hidden { display: none !important; }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: opacity, transform;
+        }
+        
+        .fade-up { transform: translateY(50px); }
+        .fade-right { transform: translateX(-50px); }
+        .fade-left { transform: translateX(50px); }
+        .scale-in { transform: scale(0.95); }
+        
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translate(0) scale(1);
+        }
+        
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.25s; }
+        .delay-3 { transition-delay: 0.4s; }
+
+        .text-reveal {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(40px);
+            animation: revealUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            will-change: transform, opacity;
+        }
+
+        @keyframes revealUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .nav-link:hover { color: var(--primary); }
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .hero-title {
+            font-size: 5.5rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.05;
+            color: var(--text-main);
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--primary), #ec4899, var(--primary));
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s ease;
+        }
+
+        .hero-image img:hover {
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+        .features-section {
+            padding: 100px 5%;
+            background: var(--surface);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 60px;
+            letter-spacing: -0.02em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg);
+            padding: 30px;
+            border-radius: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) !important;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .feature-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card h3 { font-size: 1.5rem; margin: 0 0 15px 0; font-weight: 700; color: var(--text-main); }
+
+        .auth-wrapper {
+            padding: 100px 5%;
+            background: linear-gradient(135deg, #eef2ff 0%, #f9fafb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .auth-card { 
+            background: var(--surface); 
+            width: 100%;
+            max-width: 480px; 
+            padding: 50px; 
+            border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); 
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-header h2 { margin: 0 0 10px 0; color: var(--text-main); font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+        .auth-header p { margin: 0; color: var(--text-muted); font-size: 1.05rem; }
+
+        .main-container {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @media (max-width: 850px) { 
+            .dashboard-layout { grid-template-columns: 1fr; } 
+            .hero-section { grid-template-columns: 1fr; text-align: center; padding-top: 60px; }
+            .hero-title { font-size: 3.5rem; }
+            .hero-buttons { justify-content: center; }
+        }
+
+        .sidebar { 
+            background: var(--surface); 
+            padding: 24px; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+            border-top: 5px solid var(--primary); 
+            height: fit-content; 
+        }
+        
+        .sidebar h4 { margin: 0 0 20px 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .user-item { font-size: 0.9rem; padding: 12px 10px; border-bottom: 1px solid #f9fafb; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; border-radius: 6px; }
+        .user-item:hover { background: #f3f4f6; }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 8px 0 16px 0; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 1rem; 
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #f9fafb;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            background: var(--surface);
+        }
+        
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            font-size: 1rem;
+            cursor: pointer; 
+            transition: all 0.2s; 
+        }
+        
+        button:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        button:active { transform: translateY(0); }
+        button:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-outline { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-outline:hover { background: var(--bg); color: var(--text-main); }
+        .btn-small { width: auto; padding: 10px 20px; font-size: 0.9rem; margin: 0; }
+
+        .task-card { 
+            border: 1px solid var(--border); 
+            padding: 24px; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            background: var(--surface); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .task-card:hover { transform: translateY(-3px); box-shadow: 0 15px 25px -5px rgba(0,0,0,0.1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .overdue { border-left: 5px solid var(--danger); background: #fff1f2; }
+        .role-badge { font-size: 0.7rem; padding: 4px 10px; border-radius: 99px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .dash-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .dash-tab { padding: 10px 20px; border-radius: 8px 8px 0 0; background: transparent; color: var(--text-muted); cursor: pointer; border: none; font-weight: 600; transition: 0.2s; margin-bottom: -12px; }
+        .dash-tab:hover { color: var(--primary); }
+        .dash-tab.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
+        
+        .subject-badge { background: #e0e7ff; color: #4338ca; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; display: inline-block; text-transform: uppercase;}
+        .task-desc { color: var(--text-muted); font-size: 0.95rem; margin: 12px 0; line-height: 1.5; }
+        .submission-item { background: #f9fafb; border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-top: 12px; font-size: 0.9rem; }
+        
+        .teacher-panel { background: #fdf2f8; padding: 25px; border-radius: 16px; margin-bottom: 30px; border: 1px solid #fbcfe8; }
+        
+        .footer { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.9rem; background: var(--surface); border-top: 1px solid var(--border); }
+        
+        .circular-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 130px;
+            height: 130px;
+            z-index: 100;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .circular-badge:hover {
+            transform: scale(1.15);
+        }
+
+        .circular-badge svg {
+            width: 100%;
+            height: 100%;
+            animation: rotateText 12s linear infinite;
+            transform-origin: center;
+        }
+
+        .circular-badge text {
+            font-size: 13.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            fill: var(--primary);
+        }
+
+        .badge-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 45px;
+            height: 45px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .circular-badge:hover .badge-center {
+            background: var(--teacher);
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 6px 15px rgba(219, 39, 119, 0.4);
+        }
+
+        @keyframes rotateText {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 850px) {
+            .circular-badge { width: 100px; height: 100px; bottom: 20px; right: 20px; }
+            .circular-badge text { font-size: 15px; }
+            .badge-center { width: 35px; height: 35px; font-size: 1rem; }
+        }
+    </style>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("mpCQsV_iVT9kCf6-N");
+        })();
+    </script>
+</head>
+<body>
+
+<!-- Circular SVG Floating Badge -->
+<div class="circular-badge animate-on-scroll scale-in" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+    <div class="badge-center">🚀</div>
+    <svg viewBox="0 0 100 100">
+        <path id="circlePath" fill="none" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" />
+        <text>
+            <textPath href="#circlePath" startOffset="0">
+                EDUTRACK PRO • SECURE PORTAL • 
+            </textPath>
+        </text>
+    </svg>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-brand" onclick="window.scrollTo(0,0)">
+        🎓 EduTrack Pro
+    </div>
+    
+    <!-- Links when logged out -->
+    <div id="nav-landing-links" class="nav-actions">
+        <a href="#about" class="nav-link hidden-mobile">About</a>
+        <a href="#features" class="nav-link hidden-mobile">Features</a>
+        <button onclick="document.getElementById('auth-scroll-target').scrollIntoView({behavior: 'smooth'})" class="btn-small">Login / Register</button>
+    </div>
+    
+    <!-- Links when logged in -->
+    <div id="nav-actions-logged" class="nav-actions hidden">
+        <span id="welcomeMsg" style="font-weight: 600; margin-right: 10px; display: none;"></span>
+        <button onclick="openProfileModal()" class="btn-small btn-outline">Profile</button>
+        <button onclick="logout()" class="btn-small" style="background: var(--text-muted); color: white; border:none;">Logout</button>
+    </div>
+</nav>
+
+<!-- === LANDING PAGE (Hidden after login) === -->
+<div id="landing-page">
+    
+    <!-- Hero Section -->
+    <section id="about" class="hero-section">
+        <div class="hero-content">
+            <div class="text-reveal" style="animation-delay: 0.1s; background: #e0e7ff; color: var(--primary); padding: 6px 14px; border-radius: 99px; display: inline-block; font-weight: 700; font-size: 0.85rem; margin-bottom: 20px; letter-spacing: 0.5px;">PLATFORM v2.0 NOW LIVE</div>
+            
+            <h1 class="hero-title">
+                <span class="text-reveal" style="animation-delay: 0.2s;">EduTrack</span><br/>
+                <span class="text-reveal gradient-text" style="animation-delay: 0.4s;">Pro.</span>
+            </h1>
+            
+            <p class="text-reveal" style="animation-delay: 0.6s; font-size: 1.25rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6;">
+                Empower Your Educational Journey. The modern, secure portal designed to bridge the gap between students and educators. Track assignments in real-time, receive smart email alerts, and experience seamless academic grading all in one place.
+            </p>
+            
+            <div class="hero-buttons text-reveal" style="animation-delay: 0.8s; display: flex; gap: 15px;">
+                <button onclick="document.getElementById('auth-scroll-target').scrollIntoView({behavior: 'smooth'})" style="width: auto; padding: 16px 32px; font-size: 1.1rem;">Get Started Free</button>
+                <button class="btn-outline" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})" style="width: auto; padding: 16px 32px; font-size: 1.1rem; border: none; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">Explore Features</button>
+            </div>
+        </div>
+        <div class="hero-image animate-on-scroll fade-left">
+            <!-- Professional Unsplash Education Image -->
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80" alt="Students studying together">
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <h2 class="section-title animate-on-scroll fade-up">Everything you need to succeed</h2>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll fade-up delay-1">
+                <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80" alt="Smart Tracking Notebooks">
+                <h3>Smart Tracking</h3>
+                <p style="color: var(--text-muted); line-height: 1.6;">Organize your assignments perfectly into 'Pending' and 'Completed' tabs. Never lose track of an upcoming due date again.</p>
+            </div>
+            <div class="feature-card animate-on-scroll fade-up delay-2">
+                <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80" alt="Teacher explaining">
+                <h3>Instant Feedback</h3>
+                <p style="color: var(--text-muted); line-height: 1.6;">Teachers can evaluate submissions in real-time, providing immediate scores and constructive feedback directly to the portal.</p>
+            </div>
+            <div class="feature-card animate-on-scroll fade-up delay-3">
+                <img src="https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=800&q=80" alt="Student typing on laptop">
+                <h3>Automated Alerts</h3>
+                <p style="color: var(--text-muted); line-height: 1.6;">Receive intelligent email notifications for overdue tasks, upcoming 24-hour deadlines, and successful submission receipts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Section (Welcome Back) -->
+    <section id="auth-scroll-target" class="auth-wrapper">
+        <div id="auth-section" class="auth-card animate-on-scroll scale-in">
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p>Log in or create your academic account.</p>
+            </div>
+            
+            <!-- Custom Tabs for Login vs Register -->
+            <div style="display:flex; margin-bottom: 25px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #f9fafb;">
+                <button id="tab-login" onclick="switchTab('login')" style="margin:0; border-radius:0; background: var(--primary); color: white; width: 50%; box-shadow: none;">Login</button>
+                <button id="tab-register" onclick="switchTab('register')" style="margin:0; border-radius:0; background: transparent; color: var(--text-muted); width: 50%; box-shadow: none;">Register</button>
+            </div>
+
+            <!-- LOGIN FLOW -->
+            <div id="login-fields">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Username</label>
+                <input type="text" id="login-username" placeholder="Enter your username">
+                
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password">
+                
+                <div style="background:#f9fafb; padding:15px; border-radius:10px; margin:15px 0; border: 1px solid var(--border); text-align:center;">
+                    <div id="captcha-img" style="font-family:monospace; font-size:1.5rem; letter-spacing:5px; text-decoration:line-through; margin-bottom:10px; color: var(--text-main);"></div>
+                    <input type="text" id="captcha-input" placeholder="Enter captcha code" style="margin:0; text-align:center;">
+                </div>
+                
+                <button onclick="handleLogin()">Sign In to Portal</button>
+            </div>
+
+            <!-- REGISTRATION FLOW -->
+            <div id="register-fields" class="hidden">
+                <input type="text" id="reg-username" placeholder="Choose a Username">
+                <input type="email" id="reg-email" placeholder="Email Address">
+                <input type="password" id="reg-password" placeholder="Create a Password">
+                <select id="reg-role">
+                    <option value="Student">Student Account</option>
+                    <option value="Teacher">Teacher / Admin Account</option>
+                </select>
+                <button id="btn-register" onclick="handleRegister()">Send Verification Code</button>
+            </div>
+
+            <!-- VERIFICATION FLOW -->
+            <div id="verify-fields" class="hidden">
+                <div style="background: #e0e7ff; color: #3730a3; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                    📧 An email was sent! Enter the 6-digit code sent to your inbox to verify your identity.
+                </div>
+                <input type="text" id="verify-code" placeholder="6-digit code" maxlength="6" style="text-align: center; letter-spacing: 8px; font-size: 1.5rem; font-weight: bold;">
+                <button onclick="confirmVerification()">Verify & Create Account</button>
+                <button onclick="switchTab('register')" class="btn-outline" style="margin-top: 10px;">Back to Registration</button>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- === MAIN DASHBOARD VIEW (Visible after login) === -->
+<main id="app-container" class="main-container dashboard-layout hidden">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div style="margin-bottom: 25px;">
+            <p style="margin: 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;">Logged in as</p>
+            <h3 style="margin: 5px 0 10px 0; color: var(--text-main); font-size: 1.5rem;" id="sidebar-name"></h3>
+            <span id="roleDisplay" class="role-badge" style="background:#eef2ff; color:var(--primary)"></span>
+        </div>
+        <h4>Directory</h4>
+        <div id="userList"></div>
+    </aside>
+    
+    <!-- Content Area -->
+    <div id="dashboard">
+        
+        <!-- Student Tabs -->
+        <div id="student-tabs" class="dash-tabs hidden">
+            <button class="dash-tab active" onclick="setStudentTab('pending')">Pending Tasks</button>
+            <button class="dash-tab" onclick="setStudentTab('completed')">Completed Work</button>
+        </div>
+
+        <!-- 🔔 Smart Alerts UI Box 🔔 -->
+        <div id="smart-alerts" style="display:flex; flex-direction:column; gap:10px; margin-bottom: 25px;"></div>
+
+        <!-- ✅ 📊 Progress Bar Section -->
+        <div style="background: var(--surface); padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 0.95rem; font-weight: 600; color: var(--text-main);">Overall Progress</span>
+                <span id="progress-text" style="font-size: 1rem; font-weight: 700; color: var(--primary);">0%</span>
+            </div>
+            <div style="background: var(--bg); border-radius: 99px; height: 12px; overflow: hidden;">
+                <div id="progress-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+
+        <!-- Teacher Tools -->
+        <div id="teacher-tools" class="teacher-panel hidden">
+            <h3 style="margin:0 0 20px 0; color:var(--teacher)">Create New Assignment</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label style="font-size:0.8rem; font-weight:600; color:var(--text-main)">ASSIGNMENT TITLE</label>
+                    <input type="text" id="taskName" placeholder="e.g. Chapter 4 Quiz">
+                </div>
+                <div>
+                    <label style="font-size:0.8rem; font-weight:600; color:var(--text-main)">SUBJECT</label>
+                    <input type="text" id="taskSubject" placeholder="e.g. Biology, Math">
+                </div>
+            </div>
+            
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text-main)">DESCRIPTION & INSTRUCTIONS</label>
+            <textarea id="taskDesc" placeholder="Provide details, links, or instructions here..." rows="3"></textarea>
+            
+            <label style="font-size:0.8rem; font-weight:600; color:var(--text-main)">DUE DATE</label>
+            <input type="date" id="taskDeadline">
+            
+            <button onclick="addTask()" style="background: var(--teacher);">Post Assignment to Students</button>
+        </div>
+
+        <h3 style="font-size: 1.3rem; margin-bottom: 15px; color: var(--text-main);">Assignments</h3>
+        <div id="taskList"></div>
+    </div>
+</main>
+
+<footer class="footer">
+    &copy; <script>document.write(new Date().getFullYear())</script> EduTrack Pro. All rights reserved. Built with modern web standards.
+</footer>
+
+<!-- Custom Modal UI -->
+<div id="custom-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.2s ease-out; backdrop-filter: blur(4px);">
+    <div style="background: white; padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        <h3 id="modal-title" style="margin-top: 0; color: var(--primary); font-size: 1.4rem;">Notification</h3>
+        <p id="modal-msg" style="color: var(--text-muted); margin-bottom: 25px; white-space: pre-wrap; font-size: 1rem; line-height: 1.5;"></p>
+        <button onclick="closeModal()" style="width: 100%; margin: 0;">OK, Got it</button>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profile-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.2s ease-out; backdrop-filter: blur(4px);">
+    <div style="background: white; padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; text-align: left; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">Edit Profile</h3>
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Update Password</label>
+        <input type="password" id="new-password" placeholder="Enter new password">
+        <div style="display:flex; gap:10px; margin-top: 20px;">
+            <button onclick="saveProfile()" style="margin:0;">Save Changes</button>
+            <button onclick="closeProfileModal()" class="btn-outline" style="margin:0;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Grading Modal -->
+<div id="grade-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; animation: fadeIn 0.2s ease-out; backdrop-filter: blur(4px);">
+    <div style="background: white; padding: 30px; border-radius: 16px; max-width: 400px; width: 90%; text-align: left; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 15px;">Grade Submission</h3>
+        <div style="background: #f9fafb; padding: 10px; border-radius: 8px; margin-bottom: 20px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Evaluating Student:</span><br>
+            <strong id="grade-student-name" style="color: var(--primary); font-size: 1.1rem;"></strong>
+        </div>
+        
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Score / Grade</label>
+        <input type="text" id="grade-score" placeholder="e.g. 95/100 or A+">
+        
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Feedback Comments</label>
+        <textarea id="grade-feedback" placeholder="Leave constructive feedback..." rows="3"></textarea>
+        
+        <input type="hidden" id="grade-task-id">
+        <input type="hidden" id="grade-username">
+        
+        <div style="display:flex; gap:10px; margin-top: 10px;">
+            <button onclick="saveGrade()" style="margin:0; background:var(--teacher)">Save Evaluation</button>
+            <button onclick="closeGradeModal()" class="btn-outline" style="margin:0;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    // --- FIREBASE V11 SETUP ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Detect Environment Config or Fallback
+    let firebaseConfig;
+    if (typeof __firebase_config !== 'undefined') {
+        firebaseConfig = JSON.parse(__firebase_config);
+    } else {
+        firebaseConfig = {
+            apiKey: "AIzaSyBUyOrESpBovvOGumaL4XMtz_vN_4lf7TQ",
+            authDomain: "edutrack-1ab63.firebaseapp.com",
+            projectId: "edutrack-1ab63",
+            storageBucket: "edutrack-1ab63.firebasestorage.app",
+            messagingSenderId: "1084387291716",
+            appId: "1:1084387291716:web:4179f1256fdc3c7ca34211"
+        };
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edutrack-app';
+
+    // Application State Variables
+    let users = [];
+    let tasks = [];
+    let currentUser = null;
+    let firebaseUser = null; 
+    let captchaCode = "";
+    let generatedOTP = "";
+    let pendingUser = null;
+    let dbAuthError = null; 
+    let currentStudentTab = 'pending';
+
+    const initAuth = async () => {
+        try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        } catch (e) {
+            console.error("Firebase auth init error: ", e);
+            dbAuthError = e.message;
+        }
+    };
+    initAuth();
+
+    onAuthStateChanged(auth, (user) => {
+        firebaseUser = user;
+        if (user) {
+            dbAuthError = null; 
+            onSnapshot(collection(db, `artifacts/${appId}/public/data`, 'users'), (snapshot) => {
+                users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                window.updateUserList();
+            }, (err) => console.error(err));
+
+            onSnapshot(collection(db, `artifacts/${appId}/public/data`, 'tasks'), (snapshot) => {
+                tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if(currentUser) window.renderTasks();
+            }, (err) => console.error(err));
+        }
+    });
+
+    // --- 🔔 Smart Notification Logic 🔔 ---
+    window.sendNotificationEmail = function(toEmail, toName, subject, message) {
+        const serviceID = "service_4fnejon"; 
+        const templateID = "template_2t9il3x"; 
+
+        const templateParams = {
+            to_email: toEmail,           
+            to_name: toName,
+            subject: subject,
+            message: message
+        };
+
+        emailjs.send(serviceID, templateID, templateParams)
+            .catch(err => console.error("Notification Email Error:", err));
+    }
+
+    window.renderSmartAlerts = function() {
+        if (!currentUser || currentUser.role !== 'Student') {
+            document.getElementById('smart-alerts').innerHTML = '';
+            return;
+        }
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        let alertsHtml = '';
+
+        tasks.forEach(t => {
+            const hasCompleted = t.completed && t.completed.some(c => (typeof c === 'string' ? c === currentUser.username : c.username === currentUser.username));
+            if (hasCompleted) return; 
+
+            if (t.deadline < todayStr) {
+                alertsHtml += `<div style="background: #fef2f2; border-left: 4px solid var(--danger); padding: 15px; border-radius: 8px; color: #991b1b; font-size: 0.95rem; animation: fadeIn 0.4s ease-out; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"><strong>🚨 Overdue Action Required:</strong> "${t.name}" was due on ${t.deadline}. Please submit ASAP!</div>`;
+                
+                const storageKey = `email_sent_overdue_${currentUser.username}_${t.id}`;
+                if (!localStorage.getItem(storageKey)) {
+                    window.sendNotificationEmail(currentUser.email, currentUser.username, "🚨 Overdue Task Alert", `Notice: Your assignment "${t.name}" is now overdue. Please submit your work immediately.`);
+                    localStorage.setItem(storageKey, "true");
+                }
+            } 
+            else if (t.deadline === tomorrowStr) {
+                alertsHtml += `<div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; color: #92400e; font-size: 0.95rem; animation: fadeIn 0.4s ease-out; box-shadow: 0 1px 2px rgba(0,0,0,0.05);"><strong>⏰ Due Tomorrow:</strong> "${t.name}" is due tomorrow!</div>`;
+                
+                const storageKey = `email_sent_due_${currentUser.username}_${t.id}`;
+                if (!localStorage.getItem(storageKey)) {
+                    window.sendNotificationEmail(currentUser.email, currentUser.username, "⏰ Assignment Due Tomorrow", `Friendly reminder: Your assignment "${t.name}" is due tomorrow. You've got this!`);
+                    localStorage.setItem(storageKey, "true");
+                }
+            }
+        });
+
+        document.getElementById('smart-alerts').innerHTML = alertsHtml;
+    }
+
+    // --- Core UI Functions ---
+    window.showModal = function(title, message) {
+        document.getElementById('modal-title').innerText = title;
+        document.getElementById('modal-msg').innerText = message;
+        document.getElementById('custom-modal').classList.remove('hidden');
+    }
+
+    window.closeModal = function() {
+        document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    window.updateUserList = function() {
+        document.getElementById('userList').innerHTML = users.map(u => `
+            <div class="user-item">
+                <span style="font-weight: 500;">${u.username}</span>
+                <span style="color:${u.role==='Teacher'?'var(--teacher)':'var(--student)'}; font-weight:700; font-size:0.75rem; background: ${u.role==='Teacher'?'#fce7f3':'#d1fae5'}; padding: 4px 8px; border-radius: 6px;">${u.role}</span>
+            </div>
+        `).join('');
+    }
+
+    window.generateCaptcha = function() {
+        captchaCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        document.getElementById('captcha-img').innerText = captchaCode;
+    }
+
+    window.switchTab = function(tab) {
+        const isLogin = tab === 'login';
+        
+        document.getElementById('tab-login').style.background = isLogin ? 'var(--primary)' : 'transparent';
+        document.getElementById('tab-login').style.color = isLogin ? 'white' : 'var(--text-muted)';
+        document.getElementById('tab-register').style.background = !isLogin ? 'var(--primary)' : 'transparent';
+        document.getElementById('tab-register').style.color = !isLogin ? 'white' : 'var(--text-muted)';
+        
+        document.getElementById('login-fields').classList.toggle('hidden', !isLogin);
+        document.getElementById('register-fields').classList.toggle('hidden', isLogin);
+        document.getElementById('verify-fields').classList.add('hidden');
+        
+        if (isLogin) window.generateCaptcha();
+    }
+
+    // --- REGISTRATION & REAL VERIFICATION ---
+    window.handleRegister = function() {
+        const username = document.getElementById('reg-username').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const role = document.getElementById('reg-role').value;
+
+        if(!username || !email || !password) return window.showModal("Error", "Please fill out all fields.");
+        if(!email.includes('@')) return window.showModal("Error", "Please enter a valid email address.");
+        if(users.find(u => u.username.toLowerCase() === username.toLowerCase())) return window.showModal("Error", "Username already exists! Please choose another.");
+
+        pendingUser = { username, email, password, role };
+        generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+        let now = new Date();
+        now.setMinutes(now.getMinutes() + 15);
+        let expiryTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const btn = document.getElementById('btn-register');
+        btn.innerText = "Sending Verification Email...";
+        btn.disabled = true;
+
+        const serviceID = "service_4fnejon"; 
+        const templateID = "template_7fqt25n"; 
+
+        const templateParams = {
+            to_email: email,           
+            email: email,              
+            reply_to: email,           
+            to_name: username,
+            passcode: generatedOTP,    
+            time: expiryTime           
+        };
+
+        emailjs.send(serviceID, templateID, templateParams)
+            .then(() => {
+                btn.innerText = "Send Verification Code";
+                btn.disabled = false;
+                
+                document.getElementById('register-fields').classList.add('hidden');
+                document.getElementById('verify-fields').classList.remove('hidden');
+            })
+            .catch((err) => {
+                btn.innerText = "Send Verification Code";
+                btn.disabled = false;
+                window.showModal("Email Delivery Error", "Failed to send email. Check API configurations.\n\nError details: " + JSON.stringify(err));
+            });
+    }
+
+    window.confirmVerification = async function() {
+        const code = document.getElementById('verify-code').value.trim();
+        if(code !== generatedOTP) return window.showModal("Error", "Incorrect Verification Code provided!");
+        
+        if(!firebaseUser) {
+            return window.showModal("Database Connection Error", "Database connection not ready!\n\nYou must enable 'Anonymous' sign-in in your Firebase Console.\n\nDetailed Error: " + (dbAuthError || "Still connecting..."));
+        }
+
+        try {
+            await addDoc(collection(db, `artifacts/${appId}/public/data`, 'users'), pendingUser);
+            window.showModal("Account Created Successfully!", "Your email has been verified and your account is ready. You can now log in.");
+            
+            pendingUser = null;
+            document.getElementById('reg-username').value = "";
+            document.getElementById('reg-email').value = "";
+            document.getElementById('reg-password').value = "";
+            document.getElementById('verify-code').value = "";
+            window.switchTab('login');
+        } catch (error) {
+            console.error("Firestore write error: ", error);
+            window.showModal("Database Permission Error", "Failed to save user data.\n\nPlease check your Firestore Rules.");
+        }
+    }
+
+    // --- LOGIN ---
+    window.handleLogin = function() {
+        const u = document.getElementById('login-username').value.trim();
+        const p = document.getElementById('login-password').value;
+        const c = document.getElementById('captcha-input').value.toUpperCase();
+
+        if(!u || !p) return window.showModal("Error", "Please enter both Username and Password");
+        if(c !== captchaCode) {
+            window.generateCaptcha();
+            document.getElementById('captcha-input').value = "";
+            return window.showModal("Security Check Failed", "Captcha incorrect! Please try again.");
+        }
+
+        const found = users.find(user => user.username.toLowerCase() === u.toLowerCase() && user.password === p);
+        
+        if(found) {
+            currentUser = found;
+            
+            // UI Toggle Magic -> Hide Landing, Show Dashboard
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('nav-landing-links').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.getElementById('nav-actions-logged').classList.remove('hidden');
+            
+            // Populate Dashboard Data
+            document.getElementById('sidebar-name').innerText = currentUser.username;
+            document.getElementById('welcomeMsg').innerText = `Hello, ${currentUser.username}`;
+            document.getElementById('welcomeMsg').style.display = "inline";
+            document.getElementById('roleDisplay').innerText = currentUser.role;
+            
+            if(currentUser.role === 'Teacher') {
+                document.getElementById('roleDisplay').style.color = "var(--teacher)";
+                document.getElementById('roleDisplay').style.background = "#fce7f3";
+                document.getElementById('teacher-tools').classList.remove('hidden');
+            } else {
+                document.getElementById('roleDisplay').style.color = "var(--student)";
+                document.getElementById('roleDisplay').style.background = "#d1fae5";
+                document.getElementById('student-tabs').classList.remove('hidden');
+            }
+            
+            window.scrollTo(0,0);
+            window.renderTasks();
+        } else {
+            window.generateCaptcha();
+            document.getElementById('captcha-input').value = "";
+            window.showModal("Authentication Failed", "Invalid Username or Password.");
+        }
+    }
+
+    // --- DASHBOARD LOGIC ---
+    window.updateProgress = function() {
+        if (tasks.length === 0) {
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-text').innerText = '0%';
+            return;
+        }
+
+        let percentage = 0;
+
+        if (currentUser.role === 'Student') {
+            const completedCount = tasks.filter(t => t.completed && t.completed.some(c => (typeof c === 'string' ? c === currentUser.username : c.username === currentUser.username))).length;
+            percentage = Math.round((completedCount / tasks.length) * 100);
+        } else {
+            const students = users.filter(u => u.role === 'Student').length;
+            if (students === 0) {
+                percentage = 0;
+            } else {
+                let totalCompletions = 0;
+                tasks.forEach(t => {
+                    if (t.completed) totalCompletions += t.completed.length;
+                });
+                const maxPossibleCompletions = tasks.length * students;
+                percentage = Math.round((totalCompletions / maxPossibleCompletions) * 100);
+            }
+        }
+
+        document.getElementById('progress-bar').style.width = `${percentage}%`;
+        document.getElementById('progress-text').innerText = `${percentage}%`;
+        
+        // Dynamically color progress bar
+        if(percentage === 100) document.getElementById('progress-bar').style.background = "var(--student)";
+        else document.getElementById('progress-bar').style.background = "var(--primary)";
+    }
+
+    window.setStudentTab = function(tab) {
+        currentStudentTab = tab;
+        document.querySelectorAll('.dash-tab').forEach(el => el.classList.remove('active'));
+        document.querySelector(`.dash-tab[onclick="setStudentTab('${tab}')"]`).classList.add('active');
+        window.renderTasks();
+    }
+
+    window.addTask = async function() {
+        const name = document.getElementById('taskName').value;
+        const subject = document.getElementById('taskSubject').value;
+        const desc = document.getElementById('taskDesc').value;
+        const date = document.getElementById('taskDeadline').value;
+
+        if(!name || !date) return window.showModal("Missing Information", "Please fill required fields (Title & Date)!");
+        if(!firebaseUser) return window.showModal("Connection Error", "Not connected to Database.");
+
+        const newTask = {
+            name: name,
+            subject: subject || "General",
+            desc: desc || "",
+            deadline: date,
+            completed: []
+        };
+
+        try {
+            await addDoc(collection(db, `artifacts/${appId}/public/data`, 'tasks'), newTask);
+            document.getElementById('taskName').value = "";
+            document.getElementById('taskSubject').value = "";
+            document.getElementById('taskDesc').value = "";
+            document.getElementById('taskDeadline').value = "";
+            
+            const students = users.filter(u => u.role === 'Student');
+            window.showModal("Assignment Posted!", `Successfully posted to ${students.length} students.\n\n(Smart email notifications will alert them of deadlines).`);
+        } catch (error) {
+            window.showModal("Database Error", "Cannot add task. Check Firestore rules.");
+        }
+    }
+
+    window.renderTasks = function() {
+        const list = document.getElementById('taskList');
+        window.renderSmartAlerts();
+
+        if(tasks.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:40px; background:white; border-radius:12px; border:1px solid var(--border);"><p style="color:var(--text-muted); margin:0;">No assignments currently exist in this view.</p></div>`;
+            window.updateProgress();
+            return;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        let htmlContent = '';
+
+        // Sort tasks: closest deadline first
+        let sortedTasks = [...tasks].sort((a,b) => new Date(a.deadline) - new Date(b.deadline));
+
+        sortedTasks.forEach(t => {
+            const isLate = t.deadline < today;
+            const isTeacher = currentUser.role === 'Teacher';
+            const compArray = t.completed || [];
+            
+            const hasCompleted = compArray.some(c => (typeof c === 'string' ? c === currentUser.username : c.username === currentUser.username));
+            
+            // Filter tabs for students
+            if (!isTeacher) {
+                if (currentStudentTab === 'pending' && hasCompleted) return;
+                if (currentStudentTab === 'completed' && !hasCompleted) return;
+            }
+
+            const completedByList = compArray.length > 0 
+                ? compArray.map(c => {
+                    const uname = typeof c === 'string' ? c : c.username;
+                    const link = typeof c === 'string' ? '' : c.link;
+                    const grade = (typeof c !== 'string' && c.grade) ? `<span style="color:var(--teacher); font-weight:800; font-size: 0.85rem;">Score: ${c.grade}</span>` : '';
+                    const feedback = (typeof c !== 'string' && c.feedback) ? `<span style="color:var(--text-muted); font-style: italic; font-size: 0.85rem;"><br>💬 "${c.feedback}"</span>` : '';
+
+                    let cHtml = `<div class="submission-item">
+                        <strong style="color:var(--student)">${uname}</strong>`;
+
+                    if(link && link !== 'Done') cHtml += ` &bull; <a href="${link}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">View Work 🔗</a>`;
+                    if(grade || feedback) cHtml += `<div style="margin-top:8px; padding-top:8px; border-top:1px dashed #d1d5db;">${grade} ${feedback}</div>`;
+
+                    if(isTeacher) {
+                        cHtml += `<div style="margin-top: 10px;"><button class="btn-small btn-outline" onclick="openGradeModal('${t.id}', '${uname}')" style="font-size: 0.75rem; border-color: var(--teacher); color: var(--teacher);">Evaluate Submission</button></div>`;
+                    }
+                    cHtml += `</div>`;
+                    return cHtml;
+                }).join('')
+                : `<span style="color:var(--text-muted); font-size:0.85rem; font-style: italic;">No submissions yet.</span>`;
+
+            htmlContent += `
+                <div class="task-card ${isLate && !hasCompleted ? 'overdue' : ''}" style="flex-direction: column; align-items: stretch;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+                        <div style="flex:1;">
+                            ${t.subject ? `<span class="subject-badge">${t.subject}</span>` : ''}
+                            <h3 style="font-size:1.2rem; margin: 5px 0; color: var(--text-main);">${t.name}</h3>
+                            <div style="color:var(--text-muted); font-size: 0.85rem; font-weight: 500; display:flex; align-items:center; gap:5px;">
+                                <span>📅 Due: ${t.deadline}</span> 
+                                ${isLate && !hasCompleted ? '<span style="color:var(--danger); font-weight:bold;">(Overdue)</span>' : ''}
+                            </div>
+                            ${t.desc ? `<div class="task-desc">${t.desc}</div>` : ''}
+                        </div>
+                        <div style="margin-left: 20px; display:flex; flex-direction:column; gap:8px; min-width: 140px;">
+                            ${isTeacher ? 
+                                `<button onclick="deleteTask('${t.id}')" class="btn-outline" style="border-color: var(--danger); color:var(--danger);">Delete Post</button>` :
+                                `<button onclick="toggleDone('${t.id}')" style="background:${hasCompleted ? 'var(--text-muted)' : 'var(--primary)'}; box-shadow: ${hasCompleted ? 'none' : ''}">
+                                    ${hasCompleted ? 'Undo Submission' : 'Submit Work'}
+                                </button>`
+                            }
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px; padding-top:15px; border-top:1px solid var(--border);">
+                        <small style="display:block; color:var(--text-muted); font-weight:700; margin-bottom:10px; font-size:0.75rem; text-transform:uppercase; letter-spacing: 0.5px;">Student Submissions:</small>
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            ${completedByList}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        if(!htmlContent) htmlContent = `<div style="text-align:center; padding:40px; background:white; border-radius:12px; border:1px solid var(--border);"><p style="color:var(--text-muted); margin:0;">No assignments currently exist in this view.</p></div>`;
+        
+        list.innerHTML = htmlContent;
+        window.updateProgress();
+    }
+
+    window.deleteTask = async function(id) {
+        if(!firebaseUser) return;
+        if(!confirm("Are you sure you want to permanently delete this assignment?")) return;
+        
+        try {
+            await deleteDoc(doc(db, `artifacts/${appId}/public/data`, 'tasks', id));
+        } catch (error) {
+            window.showModal("Deletion Error", "Cannot delete task. Check Firestore Rules.");
+        }
+    }
+
+    window.toggleDone = async function(id) {
+        if(!firebaseUser) return;
+        
+        const taskObj = tasks.find(t => t.id === id);
+        if(!taskObj) return;
+
+        let newCompleted = taskObj.completed ? [...taskObj.completed] : [];
+        const idx = newCompleted.findIndex(c => (typeof c === 'string' ? c === currentUser.username : c.username === currentUser.username));
+        
+        if (idx === -1) {
+            const link = window.prompt("Submit your work!\n\nEnter a link to your file (Google Drive, Docs, etc.) or just type 'Done':", "Done");
+            if (link === null) return; 
+            newCompleted.push({ username: currentUser.username, link: link, grade: "", feedback: "" });
+        } else {
+            if(confirm("Are you sure you want to un-submit this assignment? (Your teacher will no longer see your work)")) {
+                newCompleted.splice(idx, 1);
+            } else {
+                return;
+            }
+        }
+
+        try {
+            await updateDoc(doc(db, `artifacts/${appId}/public/data`, 'tasks', id), {
+                completed: newCompleted
+            });
+            
+            if (idx === -1) {
+                 window.sendNotificationEmail(currentUser.email, currentUser.username, "✅ Task Submitted Successfully", `Congratulations! You have successfully submitted your work for "${taskObj.name}". Keep it up!`);
+                 window.showModal("Success!", `Work submitted successfully!\n\nA confirmation email has been sent to your inbox.`);
+            }
+
+        } catch (error) {
+            window.showModal("Submission Error", "Cannot update task. Check database permissions.");
+        }
+    }
+
+    // --- Profile & Grading Logic ---
+    window.openProfileModal = function() {
+        document.getElementById('profile-modal').classList.remove('hidden');
+    }
+    
+    window.closeProfileModal = function() {
+        document.getElementById('profile-modal').classList.add('hidden');
+        document.getElementById('new-password').value = "";
+    }
+    
+    window.saveProfile = async function() {
+        const newPass = document.getElementById('new-password').value;
+        if(newPass && newPass.length > 3) {
+            const userDoc = users.find(u => u.username === currentUser.username);
+            if(userDoc) {
+                try {
+                    await updateDoc(doc(db, `artifacts/${appId}/public/data`, 'users', userDoc.id), {
+                        password: newPass
+                    });
+                    currentUser.password = newPass;
+                    window.showModal("Success", "Profile password updated securely.");
+                    window.closeProfileModal();
+                } catch (e) {
+                    window.showModal("Error", "Could not save profile to database.");
+                }
+            }
+        } else {
+            window.showModal("Validation Error", "Password must be at least 4 characters.");
+        }
+    }
+
+    window.openGradeModal = function(taskId, username) {
+        document.getElementById('grade-student-name').innerText = username;
+        document.getElementById('grade-task-id').value = taskId;
+        document.getElementById('grade-username').value = username;
+        
+        // Pre-fill existing grade if available
+        const taskObj = tasks.find(t => t.id === taskId);
+        const record = taskObj.completed.find(c => c.username === username || c === username);
+        
+        document.getElementById('grade-score').value = record.grade || "";
+        document.getElementById('grade-feedback').value = record.feedback || "";
+        
+        document.getElementById('grade-modal').classList.remove('hidden');
+    }
+
+    window.closeGradeModal = function() {
+        document.getElementById('grade-modal').classList.add('hidden');
+    }
+
+    window.saveGrade = async function() {
+        const taskId = document.getElementById('grade-task-id').value;
+        const username = document.getElementById('grade-username').value;
+        const score = document.getElementById('grade-score').value;
+        const feedback = document.getElementById('grade-feedback').value;
+
+        const taskObj = tasks.find(t => t.id === taskId);
+        if(!taskObj) return;
+
+        let newCompleted = taskObj.completed ? [...taskObj.completed] : [];
+        const idx = newCompleted.findIndex(c => (typeof c === 'string' ? c === username : c.username === username));
+        
+        if (idx !== -1) {
+            const record = newCompleted[idx];
+            newCompleted[idx] = {
+                username: username,
+                link: typeof record === 'string' ? 'Done' : record.link,
+                grade: score,
+                feedback: feedback
+            };
+
+            try {
+                await updateDoc(doc(db, `artifacts/${appId}/public/data`, 'tasks', taskId), {
+                    completed: newCompleted
+                });
+                window.closeGradeModal();
+            } catch (error) {
+                window.showModal("Database Error", "Cannot save grade to the server.");
+            }
+        }
+    }
+
+    window.logout = function() {
+        location.reload();
+    }
+
+    window.onload = () => {
+        window.generateCaptcha();
+        
+        // --- Scroll Animation Observer ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Run once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+    };
+</script>
+
+</body>
+</html>
