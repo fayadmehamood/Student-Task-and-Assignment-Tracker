@@ -1,23 +1,38 @@
-name: Automated Site Check
+name: Build and Push Docker Container
 
-# This tells the robot to wake up every time you push new code
-on: [push]
+# Tell the robot to wake up only when you push code to the main branch
+on:
+  push:
+    branches: [ "main" ]
 
 jobs:
-  test-my-code:
-    runs-on: ubuntu-latest # The robot uses a Linux computer
+  build-and-push:
+    runs-on: ubuntu-latest
     
+    # Give the robot secure permission to upload files to your GitHub account
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      # Step A: Download your code to the robot's computer
+      # Step A: Download your code (the HTML and the Dockerfile)
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step B: Check if the main file exists
-      - name: Verify student.html exists
-        run: |
-          if [ -f "student.html" ]; then
-            echo "✅ SUCCESS: student.html found!"
-          else
-            echo "❌ ERROR: student.html is missing!"
-            exit 1
-          fi
+      # Step B: Log the robot into the GitHub Container Warehouse
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          # This is a magical password GitHub creates automatically for security!
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step C: Read the Dockerfile, bake the container, and upload it
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # This tags your container with your exact repository name
+          tags: ghcr.io/${{ github.repository_owner }}/edutrack-pro:latest
