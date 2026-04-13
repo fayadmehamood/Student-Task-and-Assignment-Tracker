@@ -1,0 +1,23 @@
+name: Automated Site Check
+
+# This tells the robot to wake up every time you push new code
+on: [push]
+
+jobs:
+  test-my-code:
+    runs-on: ubuntu-latest # The robot uses a Linux computer
+    
+    steps:
+      # Step A: Download your code to the robot's computer
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step B: Check if the main file exists
+      - name: Verify student.html exists
+        run: |
+          if [ -f "student.html" ]; then
+            echo "✅ SUCCESS: student.html found!"
+          else
+            echo "❌ ERROR: student.html is missing!"
+            exit 1
+          fi
